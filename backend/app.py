@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify
 import numpy as np
 import instaloader
@@ -16,7 +17,19 @@ with open('./model/scaler.pkl', 'rb') as f:
 
 # Create the Instaloader instance once
 loader = instaloader.Instaloader() 
-loader.login("priyanshuchandra2003", "abcd#@1234")  # Replace with your actual credentials
+# loader.login("priyanshuchandra2003", "abcd#@1234")  # Replace with your actual credentials
+COOKIES_PATH = "cookies.txt"
+
+try:
+    if os.path.exists(COOKIES_PATH):
+        loader.load_session_from_file("priyanshuchandra2003", COOKIES_PATH) 
+        print("Loaded session from cookies.")
+    else:
+        loader.login("priyanshuchandra2003", "abcd#@1234")  # Replace with your actual credentials
+        loader.save_session_to_file(COOKIES_PATH)
+        print("Logged in and saved session to cookies.")
+except Exception as e:
+    print(f"Error during login or cookie handling: {e}")
 
 def extract_features_instaloader(username):
     """

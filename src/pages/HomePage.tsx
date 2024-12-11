@@ -6,10 +6,10 @@ import { VerificationForm } from '../components/VerificationForm';
 
 export function HomePage() {
   const stats = [
-    { title: 'Accounts Verified', value: '45,762', Icon: CheckCircle, color: 'text-indigo-600' },
-    { title: 'Fake Accounts Detected', value: '12,891', Icon: XCircle, color: 'text-red-600' },
-    { title: 'Reports Processed', value: '8,453', Icon: BarChart2, color: 'text-green-600' },
-    { title: 'Success Rate', value: '94%', Icon: Award, color: 'text-purple-600' }
+    { title: 'Accounts Verified', value: '6', Icon: CheckCircle, color: 'text-indigo-600' },
+    { title: 'Fake Accounts Detected', value: '9', Icon: XCircle, color: 'text-red-600' },
+    { title: 'Reports Processed', value: '4', Icon: BarChart2, color: 'text-green-600' },
+    { title: 'Success Rate', value: '20%', Icon: Award, color: 'text-purple-600' }
   ];
 
   return (

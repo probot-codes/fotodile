@@ -9,7 +9,7 @@ export function HomePage() {
     { title: 'Accounts Verified', value: '6', Icon: CheckCircle, color: 'text-indigo-600' },
     { title: 'Fake Accounts Detected', value: '9', Icon: XCircle, color: 'text-red-600' },
     { title: 'Reports Processed', value: '4', Icon: BarChart2, color: 'text-green-600' },
-    { title: 'Success Rate', value: '20%', Icon: Award, color: 'text-purple-600' }
+    { title: 'Success Rate', value: '91%', Icon: Award, color: 'text-purple-600' }
   ];
 
   return (

@@ -4,17 +4,19 @@ import { Header } from './components/Header';
 import { HomePage } from './pages/HomePage';
 import { ReportPage } from './pages/ReportPage';
 import { AdminPage } from './pages/AdminPage';
+import { TwitterPage } from './pages/TwitterPage';
 
 function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gray-100">
         <Header />
-        <main>
+        <main className="pt-20"> {/* Add padding here */}
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/report" element={<ReportPage />} />
             <Route path="/admin" element={<AdminPage />} />
+            <Route path="/twitter" element={<TwitterPage />} />
           </Routes>
         </main>
       </div>

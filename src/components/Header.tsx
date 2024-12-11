@@ -1,31 +1,54 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { Shield } from 'lucide-react';
 
 export function Header() {
-  return (
-    <header className="bg-indigo-600">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center">
-              <Shield className="h-8 w-8 text-white" />
-              <span className="ml-2 text-white font-bold text-xl">FakeGuard</span>
-            </Link>
-          </div>
-          <div className="flex space-x-4">
-            <Link to="/" className="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">
-              Home
-            </Link>
-            <Link to="/report" className="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">
-              Report Account
-            </Link>
-            <Link to="/admin" className="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">
-              Admin Panel
-            </Link>
-          </div>
-        </div>
-      </nav>
-    </header>
-  );
+    return (
+        <header className="absolute w-full z-50">
+            <nav className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+                <div className="flex items-center justify-between h-16 rounded-lg backdrop-blur-lg bg-indigo-100/60"> 
+                    <div className="flex items-justify">
+                        <NavLink to="/" className="flex items-justify">
+                            <Shield className="h-8 w-8 text-indigo-600" />
+                            <span className="ml-2 text-indigo-600 font-bold text-xl">prototype :3</span>
+                        </NavLink>
+                    </div>
+                    <div className="flex space-x-4">
+                        <NavLink
+                            to="/"
+                            className={({ isActive }) =>
+                                `text-indigo-600 hover:text-indigo-800 px-3 py-2 rounded-md transition-colors ${isActive ? 'bg-indigo-100 text-indigo-800' : ''}`
+                            }
+                        >
+                            Instagram Verification
+                        </NavLink>
+                        <NavLink
+                            to="/twitter"
+                            className={({ isActive }) =>
+                                `text-indigo-600 hover:text-indigo-800 px-3 py-2 rounded-md transition-colors ${isActive ? 'bg-indigo-100 text-indigo-800' : ''}`
+                            }
+                        >
+                            Twitter Verification
+                        </NavLink>
+                        <NavLink
+                            to="/report"
+                            className={({ isActive }) =>
+                                `text-indigo-600 hover:text-indigo-800 px-3 py-2 rounded-md transition-colors ${isActive ? 'bg-indigo-100 text-indigo-800' : ''}`
+                            }
+                        >
+                            Report Account
+                        </NavLink>
+                        <NavLink
+                            to="/admin"
+                            className={({ isActive }) =>
+                                `text-indigo-600 hover:text-indigo-800 px-3 py-2 rounded-md transition-colors ${isActive ? 'bg-indigo-100 text-indigo-800' : ''}`
+                            }
+                        >
+                            Admin Panel
+                        </NavLink>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    );
 }

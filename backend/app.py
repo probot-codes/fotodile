@@ -1,26 +1,22 @@
-# app.py
 from flask import Flask, request, jsonify
 import numpy as np
 import instaloader
 import pickle
-from tensorflow.keras.models import load_model
 from flask_cors import CORS  # Import CORS
+import pandas as pd  # Import pandas for DataFrame
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
 # Load the model and scaler
-MODEL_PATH = './model/model.h5'
-SCALER_PATH = './model/scaler.pkl'
-model = load_model(MODEL_PATH)
-with open(SCALER_PATH, 'rb') as f:
+with open('./model/model.pkl', 'rb') as f:
+    model = pickle.load(f)
+with open('./model/scaler.pkl', 'rb') as f:
     scaler = pickle.load(f)
 
 # Create the Instaloader instance once
 loader = instaloader.Instaloader() 
-# loader.login("shubham6942037", "snusnusnu")  # Replace with your actual credentials
 loader.login("priyanshuchandra2003", "abcd#@1234")  # Replace with your actual credentials
-
 
 def extract_features_instaloader(username):
     """
@@ -38,10 +34,14 @@ def extract_features_instaloader(username):
         name_equals_username = 1 if profile.full_name.replace(" ", "").lower() == profile.username.lower() else 0
         description_length = len(profile.biography)
         external_url = 1 if profile.external_url else 0
-        is_private = 1 if profile.is_private else 0
+        private = 1 if profile.is_private else 0  # Use 'private' consistently
         num_posts = profile.mediacount
         num_followers = profile.followers
         num_follows = profile.followees
+
+        # Calculate 'activity ratio' and '#followers > #follows?'
+        activity_ratio = np.round(num_posts / num_followers, 2) if num_followers else 0
+        followers_gt_follows = 1 if num_followers > num_follows else 0
 
         features = [
             profile_pic,
@@ -51,10 +51,12 @@ def extract_features_instaloader(username):
             name_equals_username,
             description_length,
             external_url,
-            is_private,
+            private,  # Use 'private' consistently
             num_posts,
             num_followers,
             num_follows,
+            activity_ratio,  # Add 'activity ratio'
+            followers_gt_follows  # Add '#followers > #follows?'
         ]
 
         # Extract profile information
@@ -98,23 +100,29 @@ def predict():
             return jsonify({'error': 'Failed to fetch profile information'}), 500
 
         # Apply the scaler before prediction
-        input_data = np.array(features).reshape(1, -1)  # Shape (1, 11)
+        # --- Use a DataFrame with CORRECT feature names ---
+        feature_names = ['profile pic', 'nums/length username', 'fullname words', 
+                        'nums/length fullname', 'name==username', 'description length', 
+                        'external URL', 'private', '#posts', '#followers', '#follows', 
+                        'activity ratio', '#followers > #follows?']  # Add new features
+        input_data = pd.DataFrame([features], columns=feature_names)  # Create DataFrame
         scaled_input_data = scaler.transform(input_data)
-        
-        prediction = model.predict(scaled_input_data)
-        fake_probability = float(prediction[0][0])  
+
+        # Make prediction using CatBoost model
+        prediction = model.predict(scaled_input_data)  
+        fake_probability = float(model.predict_proba(scaled_input_data)[:, 1])  # Get probability for class 1 (fake)
 
         response_data = {
             'fake_probability': fake_probability,
-            'is_fake': fake_probability >= 0.5, 
+            'is_fake': bool(prediction[0]),  # Convert to boolean
             'profile_info': profile_info  
         }
         print("Sent data:", response_data)  
         return jsonify(response_data)
 
     except Exception as e:
+        print(f"Error during prediction: {e}")
         return jsonify({'error': str(e)}), 500
-
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

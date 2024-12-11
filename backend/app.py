@@ -18,7 +18,9 @@ with open(SCALER_PATH, 'rb') as f:
 
 # Create the Instaloader instance once
 loader = instaloader.Instaloader() 
-loader.login("shubham6942037", "snusnusnu")  # Replace with your actual credentials
+# loader.login("shubham6942037", "snusnusnu")  # Replace with your actual credentials
+loader.login("priyanshuchandra2003", "abcd#@1234")  # Replace with your actual credentials
+
 
 def extract_features_instaloader(username):
     """

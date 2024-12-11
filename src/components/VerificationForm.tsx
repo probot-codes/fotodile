@@ -1,16 +1,14 @@
-
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Shield, Instagram, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
+import { Shield, AlertCircle, CheckCircle, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import type { VerificationResult } from '../types/verification';
 
-const statusIcons: Record<'pass' | 'fail' | 'warning', React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
+const statusIcons = {
     pass: CheckCircle,
     fail: XCircle,
     warning: AlertCircle,
 };
 
-const statusColors: Record<'pass' | 'fail' | 'warning', string> = {
+const statusColors = {
     pass: 'text-green-600',
     fail: 'text-red-600',
     warning: 'text-yellow-600',
@@ -21,6 +19,7 @@ export function VerificationForm() {
     const [isVerifying, setIsVerifying] = useState(false);
     const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
     const [error, setError] = useState('');
+    const [showFullBio, setShowFullBio] = useState(false);
 
     const handleVerification = async () => {
         if (!accountUrl.trim() || !/^[a-zA-Z0-9_.]+$/.test(accountUrl.trim())) {
@@ -33,8 +32,6 @@ export function VerificationForm() {
         setVerificationResult(null);
 
         try {
-            console.log("Sending username to API:", accountUrl.trim());
-
             const response = await fetch('http://localhost:5000/predict', {
                 method: 'POST',
                 headers: {
@@ -44,34 +41,10 @@ export function VerificationForm() {
             });
 
             if (!response.ok) {
-                const message = await response.text();
-                // Check if the message is a JSON string and try to parse it
-                try {
-                    const jsonMessage = JSON.parse(message);
-                    // If it's JSON, throw the error message from the JSON
-                    if (jsonMessage.error) {
-                        throw new Error(jsonMessage.error);
-                    } else {
-                        // If it's JSON but doesn't have an error property, throw the whole JSON
-                        throw new Error(JSON.stringify(jsonMessage));
-                    }
-                } catch (e) {
-                    // If it's not JSON, throw the original text message
-                    throw new Error(message);
-                }
+                throw new Error(await response.text());
             }
 
             const result = await response.json();
-            console.log("API response:", result);
-
-            if (!result || typeof result !== 'object') {
-                throw new Error('Invalid response from the server');
-            }
-
-            if (result.error) {
-                setError(result.error);
-                return;
-            }
 
             setVerificationResult({
                 isReal: !result.is_fake,
@@ -121,77 +94,100 @@ export function VerificationForm() {
         }
     };
 
-	return (
-        <div className="bg-white rounded-xl shadow-sm p-8">
-            <div className="flex items-center mb-6">
-                <Shield className="h-8 w-8 text-indigo-600 mr-3" />
-                <h2 className="text-2xl font-semibold">Account Verification</h2>
+    return (
+        <div className="bg-white rounded-xl shadow p-6 max-w-7xl mx-auto">
+            <div className="flex items-center mb-4">
+                <Shield className="h-8 w-8 text-indigo-600 mr-2" />
+                <h2 className="text-xl font-semibold">Account Verification</h2>
             </div>
 
-            <div className="space-y-6">
-                <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700">
-                        Instagram Username
-                    </label>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="col-span-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Instagram Username</label>
                     <input
                         type="text"
                         value={accountUrl}
                         onChange={(e) => setAccountUrl(e.target.value)}
-                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600"
-                        placeholder="Enter Instagram username"
+                        className="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600"
+                        placeholder="Enter username"
                     />
-                    {error && <div className="mt-2 text-red-500 text-sm">{error}</div>}
+                    {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
                 </div>
+                <div className="col-span-1 flex items-end">
+                    <button
+                        onClick={handleVerification}
+                        disabled={isVerifying}
+                        className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 disabled:opacity-50"
+                    >
+                        {isVerifying ? 'Verifying...' : 'Verify'}
+                    </button>
+                </div>
+            </div>
 
-                <button
-                    onClick={handleVerification}
-                    disabled={isVerifying}
-                    className="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 text-white py-3 rounded-lg hover:opacity-90 font-medium disabled:opacity-50"
-                >
-                    {isVerifying ? 'Verifying...' : 'Verify Account'}
-                </button>
-
-                {verificationResult && (
-                    <div className="mt-6 space-y-6">
-                        <div className={`p-6 rounded-lg flex items-start ${verificationResult.isReal ? 'bg-green-50' : 'bg-red-50'}`}>
-                            <Shield className={`h-6 w-6 mr-3 ${verificationResult.isReal ? 'text-green-600' : 'text-red-600'}`} />
-                            <div>
-                                <h3 className={`font-medium text-lg mb-2 ${verificationResult.isReal ? 'text-green-700' : 'text-red-700'}`}>
-                                    {verificationResult.isReal ? 'Verification Successful' : 'Potential Fake Account Detected'}
-                                </h3>
-                                <p className="text-gray-600">{verificationResult.message}</p>
-                            </div>
-                        </div>
-
-                        {verificationResult.profile_info.profile_pic_url && (
-                            <img
-                                src={verificationResult.profile_info.profile_pic_url}
-                                alt="Profile"
-                                className="w-32 h-32 rounded-full border"
-                            />
+            {verificationResult && (
+                <div className="mt-6 space-y-4">
+                    <div className={`p-4 rounded-lg flex items-center ${verificationResult.isReal ? 'bg-green-50' : 'bg-red-50'}`}>
+                        {React.createElement(
+                            statusIcons[verificationResult.isReal ? 'pass' : 'fail'],
+                            { className: `h-6 w-6 mr-3 ${verificationResult.isReal ? 'text-green-600' : 'text-red-600'}` }
                         )}
-
-                        <div className="bg-white border rounded-lg p-6">
-                            <h2 className="font-medium text-lg mb-4">Verification Details</h2>
-
-                            <div className="space-y-3">
-                                {verificationResult.details.map((detail, index) => (
-                                    <div key={index} className="flex items-start p-3 rounded-lg bg-gray-50">
-                                        {React.createElement(statusIcons[detail.status], {
-                                            className: `h-5 w-5 mr-3 mt-0.5 ${statusColors[detail.status]}`,
-                                        })}
-                                        <div>
-                                            <p className="font-medium text-gray-900">{detail.criterion}</p>
-                                            <p className="text-sm text-gray-600">{detail.description}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                        <div>
+                            <h3 className={`font-medium text-lg ${verificationResult.isReal ? 'text-green-700' : 'text-red-700'}`}>
+                                {verificationResult.isReal ? 'Verified Account' : 'Fake Account Suspected'}
+                            </h3>
+                            <p className="text-gray-600 text-sm">{verificationResult.message}</p>
+                            <p className="text-gray-600 text-sm">Probability: {verificationResult.riskScore}%</p>
                         </div>
                     </div>
-                )}
-            </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 className="text-lg font-medium mb-2">Account Information</h3>
+                            <div className="bg-gray-100 text-sm p-6 rounded font-mono break-words whitespace-pre-wrap w-full">
+                                <div>
+                                    <span className="font-bold text-gray-700">username:</span> {verificationResult.profile_info.username}
+                                </div>
+                                <div>
+                                    <span className="font-bold text-gray-700">full_name:</span> {verificationResult.profile_info.full_name}
+                                </div>
+                                <div>
+                                    <span className="font-bold text-gray-700">biography:</span> {verificationResult.profile_info.biography}
+                                </div>
+                                <div>
+                                    <span className="font-bold text-gray-700">profile_picture_url:</span> <a href={verificationResult.profile_info.profile_pic_url} target="_blank" rel="noopener noreferrer" style={{ color: 'blue', textDecoration: 'underline' }}>Click to view profile picture</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 className="text-lg font-medium mb-2">Verification Details</h3>
+                            <table className="w-full table-auto border-collapse border border-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="border border-gray-200 px-4 py-2 text-left text-sm font-medium text-gray-700">Criterion</th>
+                                        <th className="border border-gray-200 px-4 py-2 text-left text-sm font-medium text-gray-700">Value</th>
+                                        <th className="border border-gray-200 px-4 py-2 text-left text-sm font-medium text-gray-700">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {verificationResult.details.map((detail, index) => (
+                                        <tr key={index}>
+                                            <td className="border border-gray-200 px-4 py-2 text-sm text-gray-700">{detail.criterion}</td>
+                                            <td className="border border-gray-200 px-4 py-2 text-sm text-gray-900">{detail.description}</td>
+                                            <td className="border border-gray-200 px-4 py-2 text-sm text-gray-900 flex items-center">
+                                                {React.createElement(statusIcons[detail.status], {
+                                                    className: `h-5 w-5 ${statusColors[detail.status]} mr-2`,
+                                                })}
+                                                {detail.status}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
-    // ... (rest of the component code)
 }

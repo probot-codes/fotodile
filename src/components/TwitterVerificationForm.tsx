@@ -3,6 +3,8 @@ import { Verified } from 'lucide-react';
 import { Link } from 'react-router-dom'; 
 import type { TwitterProfileInfo } from '../types/verification';
 
+const apiUrl = "https://botodile.onrender.com";
+
 export function TwitterVerificationForm() {
     const [accountUrl, setAccountUrl] = useState('');
     const [isVerifying, setIsVerifying] = useState(false);
@@ -20,7 +22,7 @@ export function TwitterVerificationForm() {
         setVerificationResult(null);
 
         try {
-            const response = await fetch('http://localhost:5000/predict_twitter', {
+            const response = await fetch(`${apiUrl}/predict_twitter`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

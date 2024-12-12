@@ -7,6 +7,7 @@ const statusIcons = {
     fail: XCircle,
     warning: AlertCircle,
 };
+const apiUrl = "https://botodile.onrender.com";
 
 const statusColors = {
     pass: 'text-green-600',
@@ -32,7 +33,7 @@ export function VerificationForm() {
         setVerificationResult(null);
 
         try {
-            const response = await fetch('http://localhost:5000/predict', {
+            const response = await fetch(`${apiUrl}/predict`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

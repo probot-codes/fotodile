@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Verified } from 'lucide-react';
+import { Link } from 'react-router-dom'; 
+import type { TwitterProfileInfo } from '../types/verification';
 
 export function TwitterVerificationForm() {
     const [accountUrl, setAccountUrl] = useState('');
@@ -42,7 +44,7 @@ export function TwitterVerificationForm() {
     };
 
     return (
-        <div className="bg-white rounded-xl shadow p-6 max-w-5xl mx-auto"> 
+        <div className="bg-white rounded-xl shadow p-6 max-w-7xl mx-auto"> 
             <div className="flex items-center mb-4">
                 <Verified className="h-8 w-8 text-indigo-600 mr-2" />
                 <h2 className="text-xl font-semibold">Twitter Account Verification</h2>
@@ -109,9 +111,6 @@ export function TwitterVerificationForm() {
                             <span className="font-bold text-gray-700">Created At:</span> {verificationResult.created_at}
                         </div>
                         <div>
-                            <span className="font-bold text-gray-700">Avatar Image:</span> <a href={verificationResult.avatar_image} target="_blank" rel="noopener noreferrer" style={{ color: 'blue', textDecoration: 'underline' }}>Click to view avatar</a>
-                        </div>
-                        <div>
                             <span className="font-bold text-gray-700">Has Extended Profile:</span> {verificationResult.has_extended_profile ? "Yes" : "No"}
                         </div>
                         <div>
@@ -124,6 +123,11 @@ export function TwitterVerificationForm() {
                             <span className="font-bold text-gray-700">Tweet Content:</span> {verificationResult.tweet_content || "N/A"}
                         </div>
                     </div>
+                    <Link to="/report" state={{ profileInfo: verificationResult as TwitterProfileInfo }}> 
+                        <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4"> 
+                            Report Account
+                        </button>
+                    </Link>
                 </div>
             )}
         </div>

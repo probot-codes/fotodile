@@ -29,10 +29,10 @@ COOKIES_PATH = "cookies.txt"
 
 try:
     if os.path.exists(COOKIES_PATH):
-        loader.load_session_from_file("username", COOKIES_PATH)  # Load session from file
+        loader.load_session_from_file("6pnus", COOKIES_PATH)  # Load session from file
         print("Loaded session from cookies.")
     else:
-        loader.login("username", "passwd")  # Replace with your actual credentials
+        loader.login("6pnus", "snusnusnu")  # Replace with your actual credentials
         loader.save_session_to_file(COOKIES_PATH)  # Save session to file
         print("Logged in and saved session to cookies.")
 except Exception as e:

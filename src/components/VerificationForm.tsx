@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, AlertCircle, CheckCircle, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Verified, AlertCircle, CheckCircle, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import type { VerificationResult } from '../types/verification';
 
 const statusIcons = {
@@ -85,6 +85,7 @@ export function VerificationForm() {
                     },
                 ],
                 profile_info: result.profile_info,
+                socialLinks: result.social_links, // Add socialLinks from the response
             });
         } catch (err) {
             console.error(err);
@@ -95,13 +96,13 @@ export function VerificationForm() {
     };
 
     return (
-        <div className="bg-white rounded-xl shadow p-6 max-w-7xl mx-auto">
+        <div className="bg-white rounded-xl shadow p-6 max-w-9xl mx-auto">
             <div className="flex items-center mb-4">
-                <Shield className="h-8 w-8 text-indigo-600 mr-2" />
+                <Verified className="h-8 w-8 text-indigo-600 mr-2" />
                 <h2 className="text-xl font-semibold">Account Verification</h2>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="col-span-1">
                     <label className="block text-sm font-medium text-gray-700 mb-1">Instagram Username</label>
                     <input
@@ -185,6 +186,24 @@ export function VerificationForm() {
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+
+                    {/* Display social links */}
+                    <div> 
+                        <h3 className="text-lg font-medium mb-2">Social Media Presence</h3>
+                        {verificationResult.socialLinks.length > 0 ? (
+                            <ul>
+                                {verificationResult.socialLinks.map((link, index) => (
+                                    <li key={index}>
+                                        <a href={link.url} target="_blank" rel="noopener noreferrer" style={{ color: 'blue', textDecoration: 'underline' }}>
+                                            {link.platform}: {link.url}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-gray-600 text-sm">No other social media presence found.</p>
+                        )}
                     </div>
                 </div>
             )}

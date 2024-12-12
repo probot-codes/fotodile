@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Shield } from 'lucide-react';
+import { Verified } from 'lucide-react';
 
 export function Header() {
     return (
@@ -9,7 +9,7 @@ export function Header() {
                 <div className="flex items-center justify-between h-16 rounded-lg backdrop-blur-lg bg-indigo-100/60"> 
                     <div className="flex items-justify">
                         <NavLink to="/" className="flex items-justify">
-                            <Shield className="h-8 w-8 text-indigo-600" />
+                            <Verified className="h-8 w-8 text-indigo-600 ml-8" />
                             <span className="ml-2 text-indigo-600 font-bold text-xl">prototype :3</span>
                         </NavLink>
                     </div>

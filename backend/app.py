@@ -161,14 +161,87 @@ def predict():
         response_data = {
             'fake_probability': fake_probability,
             'is_fake': bool(prediction[0]),
-            'profile_info': profile_info
+            'profile_info': profile_info,
+            'social_links': []
         }
+        social_links = check_social_media_presence(username)
+        response_data['social_links'] = social_links
+
         print("Sent data:", response_data)
         return jsonify(response_data)
 
     except Exception as e:
         print(f"Error during prediction: {e}")
         return jsonify({'error': str(e)}), 500
+
+
+def check_social_media_presence(username):
+    """
+    Checks if an account with the given username exists on various platforms.
+    """
+    platforms = {
+        "Facebook": "https://www.facebook.com/{}",
+        "Twitter": "https://x.com/{}",
+        "Instagram": "https://www.instagram.com/{}",
+        "TikTok": "https://www.tiktok.com/@{}",
+        "Pinterest": "https://www.pinterest.com/{}",
+        "LinkedIn": "https://www.linkedin.com/in/{}",
+        "YouTube": "https://www.youtube.com/@{}", 
+        "Tumblr": "https://{}.tumblr.com/",
+        "Reddit": "https://www.reddit.com/user/{}",
+        "Medium": "https://medium.com/@{}",
+        "GitHub": "https://github.com/{}",
+        "GitLab": "https://gitlab.com/{}",
+        "Bitbucket": "https://bitbucket.org/{}/",
+        "Quora": "https://www.quora.com/profile/{}",
+        "Twitch": "https://www.twitch.tv/{}",
+        # "Discord": "https://discord.com/users/{}",  # Requires Discord User ID 
+    }
+    found_links = []
+
+    for platform, url_template in platforms.items():
+        url = url_template.format(username)
+        try:
+            response = requests.get(url)
+            # Platform-specific checks for profile existence
+            if response.status_code == 200:
+                if platform == "Facebook" and "The page you requested couldn't be found." not in response.text:
+                    found_links.append({"platform": platform, "url": url})
+                elif platform == "Twitter" and "This account doesn’t exist" not in response.text: 
+                    found_links.append({"platform": platform, "url": url})
+                elif platform == "Instagram" and "Page Not Found" not in response.text:
+                    found_links.append({"platform": platform, "url": url})
+                elif platform == "TikTok" and "Couldn't find this account" not in response.text:
+                    found_links.append({"platform": platform, "url": url})
+                elif platform == "Pinterest" and "Sorry, we couldn't find that page." not in response.text:
+                    found_links.append({"platform": platform, "url": url})
+                elif platform == "LinkedIn" and "profile you’re looking for" not in response.text:
+                    found_links.append({"platform": platform, "url": url})
+                elif platform == "YouTube" and "This channel doesn't exist." not in response.text:
+                    found_links.append({"platform": platform, "url": url})
+                elif platform == "Tumblr" and "There's nothing here." not in response.text:
+                    found_links.append({"platform": platform, "url": url})
+                elif platform == "Reddit" and "Sorry, nobody on Reddit goes by that name." not in response.text:
+                    found_links.append({"platform": platform, "url": url})
+                elif platform == "Medium" and "This user doesn't exist" not in response.text: 
+                    found_links.append({"platform": platform, "url": url}) 
+                elif platform == "GitHub" and "Not Found" not in response.text:
+                    found_links.append({"platform": platform, "url": url})
+                elif platform == "GitLab" and "The page you're looking for could not be found" not in response.text:
+                    found_links.append({"platform": platform, "url": url})
+                elif platform == "Bitbucket" and "Repository not found" not in response.text:
+                    found_links.append({"platform": platform, "url": url})
+                elif platform == "Quora" and "Profile couldn't be found." not in response.text:  
+                    found_links.append({"platform": platform, "url": url})
+                elif platform == "Twitch" and "Sorry. Unless you’ve got a time machine, that content is unavailable." not in response.text:
+                    found_links.append({"platform": platform, "url": url}) 
+                # ... Add checks for other platforms ...
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error checking {platform}: {e}")
+            continue
+
+    return found_links
     
 def fetch_url_content(url, save_path):
     """

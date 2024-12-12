@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield } from 'lucide-react';
+import { Verified } from 'lucide-react';
 
 export function TwitterVerificationForm() {
     const [accountUrl, setAccountUrl] = useState('');
@@ -44,7 +44,7 @@ export function TwitterVerificationForm() {
     return (
         <div className="bg-white rounded-xl shadow p-6 max-w-5xl mx-auto"> 
             <div className="flex items-center mb-4">
-                <Shield className="h-8 w-8 text-indigo-600 mr-2" />
+                <Verified className="h-8 w-8 text-indigo-600 mr-2" />
                 <h2 className="text-xl font-semibold">Twitter Account Verification</h2>
             </div>
 

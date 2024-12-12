@@ -9,7 +9,7 @@ import { TwitterPage } from './pages/TwitterPage';
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen">
         <Header />
         <main className="pt-20"> {/* Add padding here */}
           <Routes>

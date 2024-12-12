@@ -1,5 +1,5 @@
 // import React, { useState } from 'react';
-// import { Shield, ExternalLink } from 'lucide-react';
+// import { Verified, ExternalLink } from 'lucide-react';
 // import { useReportsStore } from '../store/reportsStore';
 // import { Report } from '../types/report';
 
@@ -35,7 +35,7 @@
 //       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
 //         <div className="max-w-md w-full space-y-8">
 //           <div>
-//             <Shield className="mx-auto h-12 w-12 text-indigo-600" />
+//             <Verified className="mx-auto h-12 w-12 text-indigo-600" />
 //             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
 //               Admin Login
 //             </h2>
@@ -153,7 +153,7 @@
 // }
 
 import React, { useState } from 'react';
-import { Shield, ExternalLink, Trash } from 'lucide-react';
+import { Verified, ExternalLink, Trash } from 'lucide-react';
 import { useReportsStore } from '../store/reportsStore';
 import { Report } from '../types/report';
 
@@ -195,7 +195,7 @@ export function AdminPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div>
-            <Shield className="mx-auto h-12 w-12 text-indigo-600" />
+            <Verified className="mx-auto h-12 w-12 text-indigo-600" />
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
               Admin Login
             </h2>
